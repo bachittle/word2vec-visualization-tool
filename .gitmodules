@@ -1,3 +1,0 @@
-[submodule "word2vec"]
-	path = word2vec
-	url = git@github.com:bachittle/word2vec_commented.git
