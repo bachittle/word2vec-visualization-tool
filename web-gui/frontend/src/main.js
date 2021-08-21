@@ -28,6 +28,9 @@ new OrbitControls(camera, renderer.domElement);
 
 renderer.setSize(innerWidth, innerHeight);
 
+const gridHelper = new THREE.GridHelper( 100, 10 );
+scene.add( gridHelper );
+
 document.body.appendChild(renderer.domElement);
 
 // the mesh representation of word vectors are here
