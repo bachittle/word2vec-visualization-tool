@@ -24,7 +24,7 @@ def model_to_tsne_by_word(model, word):
 		# close_word: (word, score)
 		word_vector = model[close_word[0]]
 		word_labels.append(close_word[0])
-		arr = np.append(arr, np.array([model[close_word[0]]]), axis=0)
+		arr = np.append(arr, np.array([word_vector]), axis=0)
 	
 	# tsne coords for 3 dimensions
 	tsne = TSNE(n_components=3, random_state=0)
@@ -32,6 +32,22 @@ def model_to_tsne_by_word(model, word):
 	coords = tsne.fit_transform(arr)
 	return (coords, word_labels)
 
+def model_to_tsne_top_n(model, n):
+	arr = np.empty((0,200), dtype='f')
+
+	vocab = list(model.index_to_key)
+	print(len(vocab))
+	vocab = vocab[1:n]
+	for word in vocab:
+		# close_word: (word, score)
+		arr = np.append(arr, np.array([model[word]]), axis=0)
+	
+	# tsne coords for 3 dimensions
+	tsne = TSNE(n_components=3, random_state=0)
+	np.set_printoptions(suppress=True)
+	coords = tsne.fit_transform(arr)
+	return (coords, vocab)
 if __name__ == "__main__":
 	model = get_pretrained_model()
-	res = model_to_tsne_by_word(model, 'dog')
+	# res = model_to_tsne_by_word(model, 'dog')
+	res = model_to_tsne_top_n(model, 100)
