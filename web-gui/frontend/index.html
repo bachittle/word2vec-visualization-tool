@@ -2,12 +2,31 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <!-- <link rel="icon" type="image/svg+xml" href="favicon.svg" /> -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite App</title>
+    <title>Word2Vec Visualization Tool</title>
+    <style>
+      body {
+        margin: 0;
+      }
+      #app {
+        position: absolute;
+        left: 20px;
+        color: white;
+      }
+    </style>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app">
+      <h1>Word2Vec Visualization Tool</h1>
+      <form action="/word2vec" method="POST">
+        <input type="file" name="text_file" id="textFile">
+        <br><br>
+        <textarea name="text_input" id="textInput" cols="30" rows="10" placeholder="Input text here or as a file upload"></textarea>
+        <br><br>
+        <button type="submit">Generate Word Vectors</button>
+      </form>
+    </div>
     <script type="module" src="/main.js"></script>
   </body>
 </html>
