@@ -20,10 +20,15 @@
     <div id="app">
       <h1>Word2Vec Visualization Tool</h1>
       <form action="/word2vec" method="POST">
+        <input type="text" name="word" id='word' placeholder="word to test (default: dog)">
+        <br><br><hr><br>
+        <label>Training data. If none are given, the default word2vec training model will be used. </label>
+        <br><br>
         <input type="file" name="text_file" id="textFile">
         <br><br>
         <textarea name="text_input" id="textInput" cols="30" rows="10" placeholder="Input text here or as a file upload"></textarea>
-        <br><br>
+        <br>
+        <br>
         <button type="submit">Generate Word Vectors</button>
       </form>
     </div>
