@@ -29,4 +29,3 @@ def word2vec_default():
 			res[word] = data[0][i]
 		
 		jsonify(res)
-			
