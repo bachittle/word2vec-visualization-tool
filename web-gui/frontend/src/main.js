@@ -53,7 +53,6 @@ class vectorSphere {
     this.sphere.mesh.position.x = x;
     this.sphere.mesh.position.y = y;
     this.sphere.mesh.position.z = z;
-    console.log(this.sphere.mesh);
     scene.add(this.sphere.mesh);
     // text mesh
     if (label) {
@@ -73,7 +72,6 @@ class vectorSphere {
         this.text.mesh.position.x = x-1;
         this.text.mesh.position.y = y-1.5;
         this.text.mesh.position.z = z-0.5;
-        console.log(this.text.mesh);
         scene.add(this.text.mesh);
       });
     }
@@ -106,9 +104,9 @@ function init() {
     Object.keys(vectors).forEach(word => {
       const coords = vectors[word];
       wordVectorObjects.push(new vectorSphere(
-        coords[0]/100,
-        coords[1]/100,
-        coords[2]/100,
+        coords[0]/1,
+        coords[1]/1,
+        coords[2]/1,
         1,
         word
       ))
