@@ -1,6 +1,10 @@
 import * as THREE from 'three';
 import { BufferGeometryUtils } from 'three/examples/jsm/utils/BufferGeometryUtils';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+
+import * as DAT from 'dat.gui';
+const datgui = new DAT.GUI();
+
 import { get_default_vectors } from './requests'
 
 
@@ -11,8 +15,13 @@ const settings = {
     aspect: innerWidth / innerHeight,
     near: 0.1,
     far: 1000
+  },
+  wordVectors: {
+    distanceApart: 4,
   }
 }
+
+datgui.add(settings.wordVectors, 'distanceApart', 1, 20).onChange(updateGeometries);
 
 // three js initial setup
 const scene = new THREE.Scene();
@@ -36,6 +45,7 @@ document.body.appendChild(renderer.domElement);
 
 // the mesh representation of word vectors are here
 const wordVectors = {
+  vectors: undefined,
   objects: [],
   geometries: [],
   mesh: new THREE.Mesh(),
@@ -48,6 +58,10 @@ class vectorSphere {
     this.sphere = {};
     this.text = {};
 
+    this.radius = radius;
+    this.x = x;
+    this.y = y;
+    this.z = z;
     // sphere mesh
     this.sphere.geometry = new THREE.SphereGeometry(radius);
     this.sphere.geometry.translate(x, y, z);
@@ -76,6 +90,15 @@ class vectorSphere {
   }
   update() {
   }
+
+  // efficient updating of geometry on settings changes
+  updateGeometry(x,y,z) {
+    this.sphere.geometry.translate(x-this.x, y-this.y, z-this.z);
+    this.x = x;
+    this.y = y;
+    this.z = z;
+    return this.sphere.geometry;
+  }
 }
 
 const lights = {}
@@ -97,26 +120,44 @@ function init() {
 
   // get vector data via request, then when the data appears, add to wordVectors.objects as spheres. 
   get_default_vectors().then(res => {
-    const vectors = res;
-    Object.keys(vectors).forEach(word => {
-      const coords = vectors[word];
+    wordVectors.vectors = res;
+    Object.keys(wordVectors.vectors).forEach(word => {
+      const coords = wordVectors.vectors[word];
       wordVectors.objects.push(new vectorSphere(
-        coords[0]/5,
-        coords[1]/5,
-        coords[2]/5,
+        coords[0]/settings.wordVectors.distanceApart,
+        coords[1]/settings.wordVectors.distanceApart,
+        coords[2]/settings.wordVectors.distanceApart,
         1,
         //word
       ));
     });
 
-    wordVectors.bufferGeometry = BufferGeometryUtils.mergeBufferGeometries(wordVectors.geometries);
+    const bufferGeometry = BufferGeometryUtils.mergeBufferGeometries(wordVectors.geometries);
+    console.log(bufferGeometry);
     wordVectors.material = new THREE.MeshPhongMaterial({
       color: 0xff0000,
       flatShading: THREE.FlatShading,
     });
-    wordVectors.mesh = new THREE.Mesh(wordVectors.bufferGeometry, wordVectors.material);
+    wordVectors.mesh = new THREE.Mesh(bufferGeometry, wordVectors.material);
     scene.add(wordVectors.mesh);
   });
+}
+
+// when a setting is changed, update the geometry with the necessary changes
+function updateGeometries() {
+  wordVectors.mesh.geometry.dispose();
+  const words = Object.keys(wordVectors.vectors);
+  for (let i = 0; i < words.length; i++) {
+    const word = words[i];
+    const coords = wordVectors.vectors[word];
+    const obj = wordVectors.objects[i];
+    wordVectors.geometries[i] = obj.updateGeometry(
+      coords[0]/settings.wordVectors.distanceApart,
+      coords[1]/settings.wordVectors.distanceApart,
+      coords[2]/settings.wordVectors.distanceApart,
+    );
+  }
+  wordVectors.mesh.geometry = BufferGeometryUtils.mergeBufferGeometries(wordVectors.geometries);
 }
 
 // animation loop which will render all appropriate objects and update them each frame accordingly
