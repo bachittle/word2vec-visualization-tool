@@ -8,7 +8,7 @@ export async function get_default_vectors() {
 		method: 'post',
 		url: 'http://localhost:5000/word2vec_default',
 		data: {
-			n: 5000,
+			n: 500,
 		}
 	});
 	return res.data;

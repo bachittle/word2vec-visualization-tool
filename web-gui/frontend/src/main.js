@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { BufferGeometryUtils } from 'three/examples/jsm/utils/BufferGeometryUtils';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import {Text} from 'troika-three-text';
 
 import * as DAT from 'dat.gui';
 const datgui = new DAT.GUI();
@@ -77,7 +78,7 @@ const wordVectors = {
 
 // this will show each vector as a sphere in 3D space
 class vectorSphere {
-  constructor(x,y,z,radius,font,label) {
+  constructor(x,y,z,radius,label) {
     // sphere and text object initialization
     this.sphere = {};
     this.text = {};
@@ -92,14 +93,15 @@ class vectorSphere {
     wordVectors.geometries.push(this.sphere.geometry);
     // text mesh
     if (label) {
-      // load font, then use font to make text
-      this.text.geometry = new THREE.TextGeometry(label, {
-        font: font,
-        size: 0.5,
-        height: 0.5,
-      });
-      this.text.geometry.translate(x-1, y-1.5, z-0.5);
-      wordVectors.text.geometries.push(this.text.geometry);
+      this.text = new Text();
+      this.text.text = label;
+      this.text.position.x = x;
+      this.text.position.y = y-1.1;
+      this.text.position.z = z;
+      this.text.fontSize = 0.5;
+      this.text.color = 0xffffff;
+      this.text.anchorX = 'center';
+      scene.add(this.text);
     }
   }
   update() {
@@ -108,12 +110,13 @@ class vectorSphere {
   // efficient updating of geometry on settings changes
   updateGeometry(x,y,z) {
     this.sphere.geometry.translate(x-this.x, y-this.y, z-this.z);
-    if (this.text.geometry) {
-      this.text.geometry.translate(x-this.x, y-this.y, z-this.z);
-    }
     this.x = x;
     this.y = y;
     this.z = z;
+
+      this.text.position.x = x;
+      this.text.position.y = y-1.1;
+      this.text.position.z = z;
   }
 }
 
@@ -136,41 +139,28 @@ function init() {
 
   // get vector data via request, then when the data appears, add to wordVectors.objects as spheres. 
   get_default_vectors().then(res => {
-    const loader = new THREE.FontLoader();
-    loader.load('assets/fonts/helvetiker_regular.typeface.json', (font) => {
-      wordVectors.vectors = res;
-      Object.keys(wordVectors.vectors).forEach(word => {
-        const coords = wordVectors.vectors[word];
-        wordVectors.objects.push(new vectorSphere(
-          coords[0]/settings.wordVectors.distanceApart,
-          coords[1]/settings.wordVectors.distanceApart,
-          coords[2]/settings.wordVectors.distanceApart,
-          1,
-          font,
-          //word
-        ));
-      });
-
-      const bufferGeometry = BufferGeometryUtils.mergeBufferGeometries(wordVectors.geometries);
-      console.log(bufferGeometry);
-      wordVectors.material = new THREE.MeshPhongMaterial({
-        color: 0xff0000,
-        flatShading: THREE.FlatShading,
-      });
-      wordVectors.mesh = new THREE.Mesh(bufferGeometry, wordVectors.material);
-      scene.add(wordVectors.mesh);
-      
-
-      console.log(wordVectors.text.geometries);
-      const textBufferGeometry = BufferGeometryUtils.mergeBufferGeometries(wordVectors.text.geometries);
-      console.log(textBufferGeometry);
-      wordVectors.text.material = new THREE.MeshPhongMaterial({
-        color: 0xffffff,
-        flatShading: THREE.FlatShading,
-      });
-      wordVectors.text.mesh = new THREE.Mesh(textBufferGeometry, wordVectors.text.material);
-      scene.add(wordVectors.text.mesh);
+    wordVectors.vectors = res;
+    Object.keys(wordVectors.vectors).forEach(word => {
+      const coords = wordVectors.vectors[word];
+      wordVectors.objects.push(new vectorSphere(
+        coords[0]/settings.wordVectors.distanceApart,
+        coords[1]/settings.wordVectors.distanceApart,
+        coords[2]/settings.wordVectors.distanceApart,
+        1,
+        word
+      ));
     });
+
+    const bufferGeometry = BufferGeometryUtils.mergeBufferGeometries(wordVectors.geometries);
+    console.log(bufferGeometry);
+    wordVectors.material = new THREE.MeshPhongMaterial({
+      color: 0xff0000,
+      flatShading: THREE.FlatShading,
+    });
+    wordVectors.mesh = new THREE.Mesh(bufferGeometry, wordVectors.material);
+    scene.add(wordVectors.mesh);
+    
+
   });
 }
 
@@ -188,14 +178,8 @@ function updateGeometries() {
       coords[2]/settings.wordVectors.distanceApart,
     );
     wordVectors.geometries[i] = obj.sphere.geometry; 
-    if (obj.text.geometry) {
-      wordVectors.text.geometries[i] = obj.text.geometry; 
-    }
   }
   wordVectors.mesh.geometry = BufferGeometryUtils.mergeBufferGeometries(wordVectors.geometries);
-  if (wordVectors.text.geometries.length !== 0) {
-    wordVectors.text.mesh.geometry = BufferGeometryUtils.mergeBufferGeometries(wordVectors.text.geometries);
-  }
 }
 
 // animation loop which will render all appropriate objects and update them each frame accordingly
