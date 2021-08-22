@@ -147,7 +147,7 @@ function init() {
           coords[2]/settings.wordVectors.distanceApart,
           1,
           font,
-          word
+          //word
         ));
       });
 
