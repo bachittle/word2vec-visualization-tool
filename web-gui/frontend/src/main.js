@@ -5,6 +5,17 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import * as DAT from 'dat.gui';
 const datgui = new DAT.GUI();
 
+import Stats from 'stats.js';
+const stats = new Stats();
+stats.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
+const statsParent = document.getElementById('statsParent');
+statsParent.appendChild( stats.dom );
+const statsAll = statsParent.querySelectorAll('canvas');
+statsAll.forEach(stat => {
+  stat.style.width = '120px';
+  stat.style.height = '72px';
+});
+
 import { get_default_vectors } from './requests'
 
 
@@ -189,12 +200,14 @@ function updateGeometries() {
 
 // animation loop which will render all appropriate objects and update them each frame accordingly
 function animate() {
-  requestAnimationFrame(animate);
+  stats.begin();
   renderer.render(scene, camera);
   
   wordVectors.objects.forEach(obj => {
     obj.update();
   });
+  stats.end();
+  requestAnimationFrame(animate);
 }
 
 init();
