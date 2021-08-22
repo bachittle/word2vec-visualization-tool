@@ -14,14 +14,19 @@ const settings = {
     fov: 75, 
     aspect: innerWidth / innerHeight,
     near: 0.1,
-    far: 1000
+    far: 1000,
+    position: {
+      x:0,
+      y:30,
+      z:70
+    }
   },
   wordVectors: {
-    distanceApart: 4,
+    distanceApart: 2,
   }
 }
 
-datgui.add(settings.wordVectors, 'distanceApart', 1, 20).onChange(updateGeometries);
+datgui.add(settings.wordVectors, 'distanceApart', 0.5, 10).onChange(updateGeometries);
 
 // three js initial setup
 const scene = new THREE.Scene();
@@ -31,7 +36,9 @@ const camera = new THREE.PerspectiveCamera(
   settings.camera.near,
   settings.camera.far,
 );
-camera.position.z = 5;
+camera.position.x = settings.camera.position.x;
+camera.position.y = settings.camera.position.y;
+camera.position.z = settings.camera.position.z;
 const renderer = new THREE.WebGLRenderer();
 
 new OrbitControls(camera, renderer.domElement);
@@ -49,11 +56,17 @@ const wordVectors = {
   objects: [],
   geometries: [],
   mesh: new THREE.Mesh(),
+  // separate object for text to be sent via WebGL. 2 queries isn't bad.
+  text: {
+    geometries: [],
+    mesh: new THREE.Mesh(),
+  },
 };
+
 
 // this will show each vector as a sphere in 3D space
 class vectorSphere {
-  constructor(x,y,z,radius,label) {
+  constructor(x,y,z,radius,font,label) {
     // sphere and text object initialization
     this.sphere = {};
     this.text = {};
@@ -69,23 +82,13 @@ class vectorSphere {
     // text mesh
     if (label) {
       // load font, then use font to make text
-      const loader = new THREE.FontLoader();
-      loader.load('assets/fonts/helvetiker_regular.typeface.json', (font) => {
-        this.text.geometry = new THREE.TextGeometry(label, {
-          font: font,
-          size: 0.5,
-          height: 0.5,
-        });
-        this.text.material = new THREE.MeshPhongMaterial({
-          color: 0x00ff00,
-          flatShading: THREE.FlatShading,
-        });
-        this.text.mesh = new THREE.Mesh(this.text.geometry, this.text.material);
-        this.text.mesh.position.x = x-1;
-        this.text.mesh.position.y = y-1.5;
-        this.text.mesh.position.z = z-0.5;
-        scene.add(this.text.mesh);
+      this.text.geometry = new THREE.TextGeometry(label, {
+        font: font,
+        size: 0.5,
+        height: 0.5,
       });
+      this.text.geometry.translate(x-1, y-1.5, z-0.5);
+      wordVectors.text.geometries.push(this.text.geometry);
     }
   }
   update() {
@@ -94,10 +97,12 @@ class vectorSphere {
   // efficient updating of geometry on settings changes
   updateGeometry(x,y,z) {
     this.sphere.geometry.translate(x-this.x, y-this.y, z-this.z);
+    if (this.text.geometry) {
+      this.text.geometry.translate(x-this.x, y-this.y, z-this.z);
+    }
     this.x = x;
     this.y = y;
     this.z = z;
-    return this.sphere.geometry;
   }
 }
 
@@ -120,26 +125,41 @@ function init() {
 
   // get vector data via request, then when the data appears, add to wordVectors.objects as spheres. 
   get_default_vectors().then(res => {
-    wordVectors.vectors = res;
-    Object.keys(wordVectors.vectors).forEach(word => {
-      const coords = wordVectors.vectors[word];
-      wordVectors.objects.push(new vectorSphere(
-        coords[0]/settings.wordVectors.distanceApart,
-        coords[1]/settings.wordVectors.distanceApart,
-        coords[2]/settings.wordVectors.distanceApart,
-        1,
-        //word
-      ));
-    });
+    const loader = new THREE.FontLoader();
+    loader.load('assets/fonts/helvetiker_regular.typeface.json', (font) => {
+      wordVectors.vectors = res;
+      Object.keys(wordVectors.vectors).forEach(word => {
+        const coords = wordVectors.vectors[word];
+        wordVectors.objects.push(new vectorSphere(
+          coords[0]/settings.wordVectors.distanceApart,
+          coords[1]/settings.wordVectors.distanceApart,
+          coords[2]/settings.wordVectors.distanceApart,
+          1,
+          font,
+          word
+        ));
+      });
 
-    const bufferGeometry = BufferGeometryUtils.mergeBufferGeometries(wordVectors.geometries);
-    console.log(bufferGeometry);
-    wordVectors.material = new THREE.MeshPhongMaterial({
-      color: 0xff0000,
-      flatShading: THREE.FlatShading,
+      const bufferGeometry = BufferGeometryUtils.mergeBufferGeometries(wordVectors.geometries);
+      console.log(bufferGeometry);
+      wordVectors.material = new THREE.MeshPhongMaterial({
+        color: 0xff0000,
+        flatShading: THREE.FlatShading,
+      });
+      wordVectors.mesh = new THREE.Mesh(bufferGeometry, wordVectors.material);
+      scene.add(wordVectors.mesh);
+      
+
+      console.log(wordVectors.text.geometries);
+      const textBufferGeometry = BufferGeometryUtils.mergeBufferGeometries(wordVectors.text.geometries);
+      console.log(textBufferGeometry);
+      wordVectors.text.material = new THREE.MeshPhongMaterial({
+        color: 0xffffff,
+        flatShading: THREE.FlatShading,
+      });
+      wordVectors.text.mesh = new THREE.Mesh(textBufferGeometry, wordVectors.text.material);
+      scene.add(wordVectors.text.mesh);
     });
-    wordVectors.mesh = new THREE.Mesh(bufferGeometry, wordVectors.material);
-    scene.add(wordVectors.mesh);
   });
 }
 
@@ -151,13 +171,20 @@ function updateGeometries() {
     const word = words[i];
     const coords = wordVectors.vectors[word];
     const obj = wordVectors.objects[i];
-    wordVectors.geometries[i] = obj.updateGeometry(
+    obj.updateGeometry(
       coords[0]/settings.wordVectors.distanceApart,
       coords[1]/settings.wordVectors.distanceApart,
       coords[2]/settings.wordVectors.distanceApart,
     );
+    wordVectors.geometries[i] = obj.sphere.geometry; 
+    if (obj.text.geometry) {
+      wordVectors.text.geometries[i] = obj.text.geometry; 
+    }
   }
   wordVectors.mesh.geometry = BufferGeometryUtils.mergeBufferGeometries(wordVectors.geometries);
+  if (wordVectors.text.geometries.length !== 0) {
+    wordVectors.text.mesh.geometry = BufferGeometryUtils.mergeBufferGeometries(wordVectors.text.geometries);
+  }
 }
 
 // animation loop which will render all appropriate objects and update them each frame accordingly

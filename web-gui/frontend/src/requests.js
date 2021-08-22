@@ -5,8 +5,11 @@ import axios from 'axios';
 
 export async function get_default_vectors() {
 	const res = await axios({
-		method: 'get',
+		method: 'post',
 		url: 'http://localhost:5000/word2vec_default',
+		data: {
+			n: 1000,
+		}
 	});
 	return res.data;
 }
