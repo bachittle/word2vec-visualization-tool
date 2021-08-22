@@ -4,6 +4,7 @@
 import gensim
 import numpy as np
 from sklearn.manifold import TSNE
+import json
 
 # load a pre-trained w2v embedding by default
 
@@ -46,7 +47,10 @@ def model_to_tsne_top_n(model, n):
 	tsne = TSNE(n_components=3, random_state=0)
 	np.set_printoptions(suppress=True)
 	coords = tsne.fit_transform(arr)
+
+
 	return (coords, vocab)
+
 if __name__ == "__main__":
 	model = get_pretrained_model()
 	# res = model_to_tsne_by_word(model, 'dog')
