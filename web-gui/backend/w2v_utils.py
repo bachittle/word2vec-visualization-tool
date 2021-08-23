@@ -54,4 +54,20 @@ def model_to_tsne_top_n(model, n):
 if __name__ == "__main__":
 	model = get_pretrained_model()
 	# res = model_to_tsne_by_word(model, 'dog')
-	res = model_to_tsne_top_n(model, 100)
+
+	# do top n given as cmd arg and save to cache
+	import sys
+	n = 1000
+	if len(sys.argv) > 1:
+		try:
+			n = int(sys.argv[1])
+		except:
+			pass
+	print('model to tsne with top ', n, ' most used words')
+	res = model_to_tsne_top_n(model, n)
+	json_res = {}
+	for i in range(len(vocab)):
+		word = vocab[i]
+		json_res[word] = coords[i]
+	with open('./cache.json', 'w') as fp:
+		json.dump(res, fp)
