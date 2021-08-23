@@ -33,11 +33,11 @@ const settings = {
     }
   },
   wordVectors: {
-    distanceApart: 2,
+    distanceApart: 5,
   }
 }
 
-datgui.add(settings.wordVectors, 'distanceApart', 0.5, 10).onChange(updateGeometries);
+datgui.add(settings.wordVectors, 'distanceApart', 1, 1000).onChange(updateGeometries);
 
 // three js initial setup
 const scene = new THREE.Scene();
@@ -142,9 +142,9 @@ function init() {
       Object.keys(wordVectors.vectors).forEach(word => {
         const coords = wordVectors.vectors[word];
         wordVectors.objects.push(new vectorSphere(
-          coords[0]/settings.wordVectors.distanceApart,
-          coords[1]/settings.wordVectors.distanceApart,
-          coords[2]/settings.wordVectors.distanceApart,
+          coords[0]/(1/(settings.wordVectors.distanceApart)),
+          coords[1]/(1/(settings.wordVectors.distanceApart)),
+          coords[2]/(1/(settings.wordVectors.distanceApart)),
           1,
           font,
           //word
