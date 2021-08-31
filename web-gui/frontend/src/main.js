@@ -16,7 +16,7 @@ statsAll.forEach(stat => {
   stat.style.height = '72px';
 });
 
-import { get_default_vectors } from './requests'
+import * as req from './requests';
 
 
 // dat gui settings object
@@ -135,7 +135,7 @@ function init() {
   //wordVectors.objects.push(new vectorSphere(0,0,1,1,'test'))
 
   // get vector data via request, then when the data appears, add to wordVectors.objects as spheres. 
-  get_default_vectors().then(res => {
+  req.get_test_vectors().then(res => {
     const loader = new THREE.FontLoader();
     loader.load('assets/fonts/helvetiker_regular.typeface.json', (font) => {
       wordVectors.vectors = res;
