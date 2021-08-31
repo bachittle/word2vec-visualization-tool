@@ -2,6 +2,8 @@
 
 https://word2vec.chittle.codes
 
+![image](https://user-images.githubusercontent.com/39804642/131440909-b8df4608-2d5a-4dc5-a35d-508930c64f88.png)
+
 A 2d/3d visualization tool for word2vec, made as a fun 
 personal project to see how one can visualize vector 
 representations of words. 
