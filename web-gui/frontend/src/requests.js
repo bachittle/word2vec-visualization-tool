@@ -3,7 +3,7 @@
 
 import axios from 'axios';
 
-export const REQUEST_URI = 'https://word2vec.chittle.codes';
+export const REQUEST_URI = 'https://word2vec.chittle.codes/api';
 
 export async function get_default_vectors() {
 	const res = await axios({
@@ -21,6 +21,7 @@ export async function get_cached_vectors() {
 		method: 'get',
 		url: `${REQUEST_URI}/word2vec_cached`,
 	});
+	console.log(res);
 	return res.data;
 }
 
