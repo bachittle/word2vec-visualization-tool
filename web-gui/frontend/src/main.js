@@ -135,7 +135,7 @@ function init() {
   //wordVectors.objects.push(new vectorSphere(0,0,1,1,'test'))
 
   // get vector data via request, then when the data appears, add to wordVectors.objects as spheres. 
-  req.get_test_vectors().then(res => {
+  req.get_cached_vectors().then(res => {
     const loader = new THREE.FontLoader();
     loader.load('assets/fonts/helvetiker_regular.typeface.json', (font) => {
       wordVectors.vectors = res;

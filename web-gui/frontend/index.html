@@ -9,11 +9,13 @@
       body {
         margin: 0;
       }
-      #app {
+      #textContent {
         position: absolute;
         left: 20px;
         top: 40px;
         color: white;
+        text-align: center;
+        width: 100%;
       }
       #statsParent {
         position: absolute;
@@ -22,20 +24,8 @@
   </head>
   <body>
     <div id="statsParent"></div>
-    <div id="app">
-      <h1>Word2Vec Visualization Tool</h1>
-      <form action="/word2vec" method="POST">
-        <input type="text" name="word" id='word' placeholder="word to test (default: dog)">
-        <br><br><hr><br>
-        <label>Training data. If none are given, the default word2vec training model will be used. </label>
-        <br><br>
-        <input type="file" name="text_file" id="textFile">
-        <br><br>
-        <textarea name="text_input" id="textInput" cols="30" rows="10" placeholder="Input text here or as a file upload"></textarea>
-        <br>
-        <br>
-        <button type="submit">Generate Word Vectors</button>
-      </form>
+    <div id="textContent">
+      <h1>Word2Vec Visualization</h1>
     </div>
     <script type="module" src="/src/main.js"></script>
   </body>
