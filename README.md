@@ -1,5 +1,7 @@
 # word2vec visualization tool
 
+https://word2vec.chittle.codes
+
 A 2d/3d visualization tool for word2vec, made as a fun 
 personal project to see how one can visualize vector 
 representations of words. 
