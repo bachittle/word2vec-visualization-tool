@@ -65,9 +65,10 @@ if __name__ == "__main__":
 			pass
 	print('model to tsne with top ', n, ' most used words')
 	res = model_to_tsne_top_n(model, n)
-	json_res = {}
+	json_res = []
+	coords = res[0]
+	vocab = res[1]
 	for i in range(len(vocab)):
-		word = vocab[i]
-		json_res[word] = coords[i]
+		json_res.append(vocab[i], coords[i])
 	with open('./cache.json', 'w') as fp:
 		json.dump(res, fp)

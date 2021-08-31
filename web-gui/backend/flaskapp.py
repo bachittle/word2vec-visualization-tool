@@ -18,7 +18,26 @@ def word2vec_handler():
 	elif text_input:
 		print(text_input)
 
-# get the default json file
+
+# test word vector (test.json)
+@app.route('/word2vec_test', methods=['GET', 'POST'])
+@cross_origin()
+def word2vec_test():
+	with open('./test.json', 'r') as fp:
+		wordvec = json.load(fp)
+		return jsonify(wordvec)
+
+# get cached word vector (cache.json)
+@app.route('/word2vec_cached', methods=['GET', 'POST'])
+@cross_origin()
+def word2vec_cache():
+	with open('./cache.json', 'r') as fp:
+		wordvec = json.load(fp)
+		return jsonify(wordvec)
+
+
+# render and get the default word2vec json file 
+# parameters can set the length to be of certain size, or to just get vectors close to a requested word for efficiency.
 @app.route('/word2vec_default', methods=['GET', 'POST'])
 @cross_origin()
 def word2vec_default():
