@@ -3,10 +3,12 @@
 
 import axios from 'axios';
 
+export const REQUEST_URI = https://word2vec.chittle.codes
+
 export async function get_default_vectors() {
 	const res = await axios({
 		method: 'post',
-		url: 'http://localhost:5000/word2vec_default',
+		url: `${REQUEST_URI}/word2vec_default`,
 		data: {
 			n: 5000,
 		}
@@ -17,7 +19,7 @@ export async function get_default_vectors() {
 export async function get_cached_vectors() {
 	const res = await axios({
 		method: 'get',
-		url: 'http://localhost:5000/word2vec_cached',
+		url: `${REQUEST_URI}/word2vec_cached`,
 	});
 	return res.data;
 }
@@ -25,7 +27,7 @@ export async function get_cached_vectors() {
 export async function get_test_vectors() {
 	const res = await axios({
 		method: 'get',
-		url: 'http://localhost:5000/word2vec_test',
+		url: `${REQUEST_URI}/word2vec_test`,
 	});
 	return res.data;
 }
