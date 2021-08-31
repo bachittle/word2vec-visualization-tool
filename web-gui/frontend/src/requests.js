@@ -3,7 +3,7 @@
 
 import axios from 'axios';
 
-export const REQUEST_URI = https://word2vec.chittle.codes
+export const REQUEST_URI = 'https://word2vec.chittle.codes';
 
 export async function get_default_vectors() {
 	const res = await axios({
