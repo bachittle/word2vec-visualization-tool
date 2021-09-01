@@ -9,14 +9,18 @@ const textContent = document.getElementById('textContent');
 const arrowButton = document.getElementById('arrowButton');
 
 // form that will be visible on arrow button press
-const wordSearchForm = document.getElementById('wordSearchForm');
+export const wordSearchForm = document.getElementById('wordSearchForm');
+
+const wordSearchSettings = document.getElementById('settings');
 
 // current amount of items stored for simplicity
 let amountOfWords = 1;
 
+export const results = [];
+
 export const getWordFormData = () => {
 	return `
-	<div id="item${amountOfWords}">
+	<div id="item${amountOfWords}" class="items">
 		<input type="text" name="word[]" placeholder="Enter a Word">
 		<input type="checkbox" class="checkbox">
 	</div>
@@ -26,9 +30,11 @@ export const getWordFormData = () => {
 arrowButton.onclick = () => {
 	if (wordSearchForm.style.display === "none") {
 		wordSearchForm.style.display = "block";
+		wordSearchSettings.style.display = "block";
 		arrowButton.innerHTML = '/\\';
 	} else {
 		wordSearchForm.style.display = "none";
+		wordSearchSettings.style.display = "none";
 		arrowButton.innerHTML = '\\/';
 	}
 }
@@ -38,6 +44,7 @@ wordSearchForm.onsubmit = (e) => {
 	const data = new FormData(wordSearchForm);
 	const words = data.getAll('word[]');
 	console.log(words);
+	results = words;
 }
 
 // plus and minus button will add form elements
@@ -45,9 +52,16 @@ const plusButton = document.getElementById('plusButton');
 const minusButton = document.getElementById('minusButton');
 
 plusButton.onclick = () => {
-	console.log('test');
-	wordSearchForm.innerHTML += getWordFormData();
-	amountOfWords += 1;
+	if (amountOfWords < 10) {
+		wordSearchForm.innerHTML += getWordFormData();
+		amountOfWords++;
+	}
 };
 
-export default {};
+minusButton.onclick = () => {
+	if (amountOfWords > 1) {
+		amountOfWords--;
+		const lastElem = document.getElementById(`item${amountOfWords}`)
+		lastElem.remove();
+	}
+}
