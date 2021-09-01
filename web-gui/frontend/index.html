@@ -30,9 +30,6 @@
         position: absolute;
       }
 
-      #wordSearchForm {
-        display: none;
-      }
     </style>
   </head>
   <body>
@@ -40,13 +37,18 @@
     <div id="textContent">
       <div class="content">
         <h1>Word2Vec Visualization</h1>
-        <button id="arrowButton">\/</button>
+        <button id="arrowButton">/\</button>
       </div>
       <form action="" id="wordSearchForm">
-        <br>
-        <input type="text" name="word" placeholder="Enter a Word">
-        <button>Search</button>
+        <div id="item0">
+          <input type="text" name="word[]" placeholder="Enter a Word">
+          <input type="checkbox" class="checkbox">
+        </div>
       </form>
+      <div id="settings">
+        <input type="button" id="plusButton" value="+">
+        <input type="button" id="minusButton" value="-">
+      </div>
     </div>
     <script type="module" src="/src/main.js"></script>
   </body>
