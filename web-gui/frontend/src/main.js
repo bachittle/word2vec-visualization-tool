@@ -136,8 +136,6 @@ function init() {
 
   // get vector data via request, then when the data appears, add to wordVectors.objects as spheres. 
   req.get_cached_vectors().then(res => {
-    const loader = new THREE.FontLoader();
-    loader.load('assets/fonts/helvetiker_regular.typeface.json', (font) => {
       wordVectors.vectors = res;
       Object.keys(wordVectors.vectors).forEach(word => {
         const coords = wordVectors.vectors[word];
@@ -146,7 +144,7 @@ function init() {
           coords[1]/(1/(settings.wordVectors.distanceApart)),
           coords[2]/(1/(settings.wordVectors.distanceApart)),
           1,
-          font,
+		  null,
           //word
         ));
       });
@@ -170,7 +168,6 @@ function init() {
       });
       wordVectors.text.mesh = new THREE.Mesh(textBufferGeometry, wordVectors.text.material);
       scene.add(wordVectors.text.mesh);
-    });
   });
 }
 

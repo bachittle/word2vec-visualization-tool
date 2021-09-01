@@ -7,6 +7,8 @@ app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
+PWD = '.'
+
 @app.route('/word2vec')
 def word2vec_handler():
 	text_file = request.form['text_file']
@@ -23,7 +25,7 @@ def word2vec_handler():
 @app.route('/word2vec_test', methods=['GET', 'POST'])
 @cross_origin()
 def word2vec_test():
-	with open('./test.json', 'r') as fp:
+	with open(f'{PWD}/test.json', 'r') as fp:
 		wordvec = json.load(fp)
 		return jsonify(wordvec)
 
@@ -31,7 +33,7 @@ def word2vec_test():
 @app.route('/word2vec_cached', methods=['GET', 'POST'])
 @cross_origin()
 def word2vec_cache():
-	with open('./cache.json', 'r') as fp:
+	with open(f'{PWD}/cache.json', 'r') as fp:
 		wordvec = json.load(fp)
 		return jsonify(wordvec)
 
@@ -75,7 +77,7 @@ def word2vec_default():
 		word = data[1][i]
 		res[word] = data[0][i].tolist()
 	# cache?
-	with open('./cache.json', 'w') as fp:
+	with open(f'{PWD}/cache.json', 'w') as fp:
 		json.dump(res, fp)
 	return jsonify(res)
 

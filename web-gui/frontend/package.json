@@ -4,7 +4,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "serve": "vite preview"
+    "serve": "vite preview",
+	"prod": "vite build && sudo rm -rf /var/www/w2v && sudo cp -r dist /var/www/w2v"
   },
   "devDependencies": {
     "vite": "^2.4.4"
