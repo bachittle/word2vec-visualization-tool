@@ -1,3 +1,5 @@
+import * as dynamicTextContent from './dynamicTextContent';
+
 import * as THREE from 'three';
 import { BufferGeometryUtils } from 'three/examples/jsm/utils/BufferGeometryUtils';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
